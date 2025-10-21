@@ -2,66 +2,95 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <!-- 
-      META VIEWPORT (PENTING!): 
-      Ini adalah bagian terpenting untuk responsivitas di mobile. 
-      Tag ini memberitahu browser mobile untuk menggunakan lebar perangkat sebagai lebar viewport 
-      dan mencegah penskalaan otomatis. Tanpa ini, browser mobile akan mencoba menampilkan 
-      versi desktop dari halaman, yang menyebabkan UI menjadi kecil dan sulit digunakan.
-    -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>Dashboard Siswa Priority Depok</title>
-
     <style>
-        /* Menghilangkan margin dan padding default dari body */
         body, html {
             margin: 0;
             padding: 0;
             height: 100%;
-            overflow: hidden; /* Mencegah scrollbar muncul di halaman utama */
+            overflow: hidden;
             font-family: sans-serif;
+            background-color: #f0f0f0; /* Menambahkan background untuk loading */
         }
-
-        /* Styling untuk iframe agar mengisi seluruh layar.
-          Menggunakan position: absolute lebih konsisten daripada fixed dalam beberapa kasus.
-        */
         .responsive-iframe {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            border: none; /* Menghilangkan border iframe */
+            border: none;
+            visibility: hidden; /* Sembunyikan iframe awalnya */
+        }
+        .loader {
+            border: 8px solid #dddddd;
+            border-top: 8px solid #3498db;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            animation: spin 1.5s linear infinite;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        @keyframes spin {
+            0% { transform: translate(-50%, -50%) rotate(0deg); }
+            100% { transform: translate(-50%, -50%) rotate(360deg); }
         }
     </style>
 </head>
 <body>
+    
+    <!-- Elemen untuk menampilkan animasi loading -->
+    <div id="loading-spinner" class="loader"></div>
 
     <!-- 
-      ATRIBUT SANDBOX (OPSIONAL TAPI DIANJURKAN):
-      Atribut ini meningkatkan keamanan dan dapat mengatasi masalah interaktivitas.
-      Dengan memberikan izin spesifik, Anda memastikan fitur-fitur seperti script, form,
-      dan popup di dalam iframe dapat berjalan dengan baik. Ini seringkali memperbaiki
-      masalah "tidak bisa diklik".
+      IFRAME SRC DIKOSONGKAN:
+      Atribut 'src' sengaja dikosongkan pada awalnya. URL akan diisi oleh JavaScript
+      setelah halaman utama selesai dimuat. Ini adalah trik untuk mengatasi masalah
+      redirect di browser mobile.
     -->
     <iframe 
         id="webapp-iframe"
         class="responsive-iframe"
-        src="https://script.google.com/macros/s/AKfycbwz0q7gqChfy2-WWK7a_dgsraH-Y1zekx1fx9qaZISZxF0UqNRIqV9eLBmvqw348suk/exec?authuser=0"
+        src=""
         allowfullscreen="true"
-        sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-presentation">
+        sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-presentation"
+        referrerpolicy="no-referrer-when-downgrade">
     </iframe>
 
-    <!-- 
-      CATATAN TENTANG FULLSCREEN:
-      Meminta fullscreen secara otomatis saat halaman dimuat (window.onload) seringkali diblokir
-      oleh browser modern karena dianggap mengganggu pengalaman pengguna.
-      Fullscreen harus dipicu oleh interaksi pengguna, seperti klik tombol.
-      Jika fitur fullscreen tetap dibutuhkan, Anda bisa menambahkan tombol khusus untuk itu.
-      Kode JavaScript yang sebelumnya Anda gunakan saya hapus karena kemungkinan besar itu
-      adalah salah satu penyebab masalah atau setidaknya tidak berfungsi sesuai harapan.
-    -->
+    <script>
+        // Jalankan skrip setelah seluruh halaman (termasuk style dan gambar) dimuat
+        window.addEventListener('load', function() {
+            const iframe = document.getElementById('webapp-iframe');
+            const loader = document.getElementById('loading-spinner');
+
+            // --- GANTI ID-SCRIPT-ANDA DI BAWAH INI ---
+            const appScriptId = 'AKfycbwz0q7gqChfy2-WWK7a_dgsraH-Y1zekx1fx9qaZISZxF0UqNRIqV9eLBmvqw348suk';
+            // -----------------------------------------
+
+            const appScriptUrl = `https://script.google.com/macros/s/${appScriptId}/exec?authuser=0`;
+
+            // Atur sumber iframe secara dinamis
+            iframe.src = appScriptUrl;
+
+            // Tambahkan event listener untuk mendeteksi saat iframe selesai memuat
+            iframe.onload = function() {
+                // Sembunyikan animasi loading
+                loader.style.display = 'none';
+                // Tampilkan iframe setelah kontennya siap
+                iframe.style.visibility = 'visible';
+            };
+            
+            // Penanganan jika iframe gagal dimuat (misalnya, karena error jaringan)
+            iframe.onerror = function() {
+                loader.style.display = 'none';
+                document.body.innerHTML = '<p style="text-align:center; padding-top: 40vh;">Gagal memuat aplikasi. Silakan coba lagi nanti.</p>';
+            };
+        });
+    </script>
 
 </body>
 </html>
+
