@@ -11,27 +11,7 @@
             height: 100%;
             overflow: hidden;
             font-family: sans-serif;
-            background-color: #f0f0f0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-        }
-        #start-screen {
-            padding: 20px;
-        }
-        #start-button {
-            background-color: #3498db;
-            color: white;
-            border: none;
-            padding: 15px 30px;
-            font-size: 18px;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-        #start-button:hover {
-            background-color: #2980b9;
+            background-color: #f0f0f0; /* Menambahkan background untuk loading */
         }
         .responsive-iframe {
             position: absolute;
@@ -40,6 +20,7 @@
             width: 100%;
             height: 100%;
             border: none;
+            visibility: hidden; /* Sembunyikan iframe awalnya */
         }
         .loader {
             border: 8px solid #dddddd;
@@ -48,76 +29,53 @@
             width: 60px;
             height: 60px;
             animation: spin 1.5s linear infinite;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
         }
         @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        /* Class untuk menyembunyikan elemen */
-        .hidden {
-            display: none;
+            0% { transform: translate(-50%, -50%) rotate(0deg); }
+            100% { transform: translate(-50%, -50%) rotate(360deg); }
         }
     </style>
 </head>
 <body>
     
-    <!-- Layar Awal dengan Tombol -->
-    <div id="start-screen">
-        <h2>Selamat Datang</h2>
-        <p>Klik tombol di bawah untuk membuka dashboard.</p>
-        <button id="start-button">Buka Aplikasi</button>
-    </div>
+    <!-- Elemen untuk menampilkan animasi loading -->
+    <div id="loading-spinner" class="loader"></div>
 
-    <!-- Elemen Loading, awalnya tersembunyi -->
-    <div id="loading-spinner" class="loader hidden"></div>
-
-    <!-- Iframe, awalnya tersembunyi -->
     <iframe 
         id="webapp-iframe"
-        class="responsive-iframe hidden"
+        class="responsive-iframe"
+        src=""
         allowfullscreen="true"
         sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-presentation"
         referrerpolicy="no-referrer-when-downgrade">
     </iframe>
 
     <script>
-        const startScreen = document.getElementById('start-screen');
-        const startButton = document.getElementById('start-button');
-        const loader = document.getElementById('loading-spinner');
-        const iframe = document.getElementById('webapp-iframe');
-
-        // Tambahkan event listener pada tombol
-        startButton.addEventListener('click', function() {
-            // 1. Sembunyikan layar awal
-            startScreen.classList.add('hidden');
-
-            // 2. Tampilkan loading spinner
-            loader.classList.remove('hidden');
+        window.addEventListener('load', function() {
+            const iframe = document.getElementById('webapp-iframe');
+            const loader = document.getElementById('loading-spinner');
 
             // --- GANTI ID-SCRIPT-ANDA DI BAWAH INI ---
             const appScriptId = 'AKfycbwz0q7gqChfy2-WWK7a_dgsraH-Y1zekx1fx9qaZISZxF0UqNRIqV9eLBmvqw348suk';
             // -----------------------------------------
 
-            const appScriptUrl = `https://script.google.com/macros/s/${appScriptId}/exec`;
+            const appScriptUrl = `https://script.google.com/macros/s/${appScriptId}/exec?authuser=0`;
 
-            // 3. Atur sumber URL iframe untuk memulai pemuatan
+            // Atur sumber iframe secara dinamis
             iframe.src = appScriptUrl;
 
-            // 4. Tampilkan iframe (masih kosong saat ini)
-            iframe.classList.remove('hidden');
-
-            // 5. Atur apa yang terjadi setelah iframe SELESAI memuat kontennya
             iframe.onload = function() {
-                // Sembunyikan loading spinner
-                loader.classList.add('hidden');
+                loader.style.display = 'none';
+                iframe.style.visibility = 'visible';
             };
-
-            // Penanganan jika iframe gagal dimuat
+            
             iframe.onerror = function() {
-                loader.classList.add('hidden');
-                iframe.classList.add('hidden');
-                startScreen.classList.remove('hidden');
-                startScreen.innerHTML = '<p>Gagal memuat aplikasi. Silakan coba lagi nanti.</p>';
+                loader.style.display = 'none';
+                document.body.innerHTML = '<p style="text-align:center; padding-top: 40vh;">Gagal memuat aplikasi. Silakan coba lagi nanti.</p>';
             };
         });
     </script>
