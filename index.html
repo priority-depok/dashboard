@@ -11,7 +11,7 @@
             height: 100%;
             overflow: hidden;
             font-family: sans-serif;
-            background-color: #f0f0f0; /* Menambahkan background untuk loading */
+            background-color: #f0f0f0;
         }
         .responsive-iframe {
             position: absolute;
@@ -20,7 +20,7 @@
             width: 100%;
             height: 100%;
             border: none;
-            visibility: hidden; /* Sembunyikan iframe awalnya */
+            visibility: hidden;
         }
         .loader {
             border: 8px solid #dddddd;
@@ -42,15 +42,8 @@
 </head>
 <body>
     
-    <!-- Elemen untuk menampilkan animasi loading -->
     <div id="loading-spinner" class="loader"></div>
 
-    <!-- 
-      IFRAME SRC DIKOSONGKAN:
-      Atribut 'src' sengaja dikosongkan pada awalnya. URL akan diisi oleh JavaScript
-      setelah halaman utama selesai dimuat. Ini adalah trik untuk mengatasi masalah
-      redirect di browser mobile.
-    -->
     <iframe 
         id="webapp-iframe"
         class="responsive-iframe"
@@ -61,7 +54,6 @@
     </iframe>
 
     <script>
-        // Jalankan skrip setelah seluruh halaman (termasuk style dan gambar) dimuat
         window.addEventListener('load', function() {
             const iframe = document.getElementById('webapp-iframe');
             const loader = document.getElementById('loading-spinner');
@@ -72,18 +64,36 @@
 
             const appScriptUrl = `https://script.google.com/macros/s/${appScriptId}/exec?authuser=0`;
 
-            // Atur sumber iframe secara dinamis
-            iframe.src = appScriptUrl;
+            // --- METODE BARU: MENGGUNAKAN SRCDOC ---
+            // Kita membuat halaman HTML sementara di dalam iframe.
+            // Halaman ini berisi skrip yang akan mengarahkan iframe ke URL tujuan.
+            // Ini membantu melewati beberapa masalah redirect di browser mobile.
+            const redirectHtml = `
+                <!DOCTYPE html>
+                <html>
+                <head><title>Redirecting...</title></head>
+                <body>
+                    <p style="font-family: sans-serif; text-align: center; margin-top: 40vh;">Mengarahkan ke aplikasi...</p>
+                    <script>
+                        window.location.replace("${appScriptUrl}");
+                    <\/script>
+                </body>
+                </html>
+            `;
 
-            // Tambahkan event listener untuk mendeteksi saat iframe selesai memuat
+            // Atur konten iframe menggunakan srcdoc
+            iframe.srcdoc = redirectHtml;
+            
             iframe.onload = function() {
-                // Sembunyikan animasi loading
                 loader.style.display = 'none';
-                // Tampilkan iframe setelah kontennya siap
                 iframe.style.visibility = 'visible';
+                // Setelah redirect internal selesai, srcdoc akan hilang, 
+                // jadi kita hapus untuk mencegah perilaku tak terduga.
+                setTimeout(() => {
+                    iframe.removeAttribute('srcdoc');
+                }, 100); 
             };
             
-            // Penanganan jika iframe gagal dimuat (misalnya, karena error jaringan)
             iframe.onerror = function() {
                 loader.style.display = 'none';
                 document.body.innerHTML = '<p style="text-align:center; padding-top: 40vh;">Gagal memuat aplikasi. Silakan coba lagi nanti.</p>';
