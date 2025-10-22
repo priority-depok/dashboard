@@ -192,6 +192,13 @@
             iframe.onload = function() {
                 loader.style.display = 'none';
                 iframe.style.visibility = 'visible';
+                 // --- PERUBAHAN DIMULAI ---
+                // Tambahkan state ke history setelah app dimuat
+                // Ini menciptakan "jebakan" agar tombol kembali tidak menutup app
+                if (window.location.hash !== '#app') {
+                    history.pushState({ page: "app" }, "App", "#app");
+                }
+                // --- PERUBAHAN SELESAI ---
             };
             
             iframe.onerror = function() {
@@ -199,6 +206,19 @@
                 document.body.innerHTML = '<p style="text-align:center; padding-top: 40vh;">Gagal memuat aplikasi. Silakan coba lagi nanti.</p>';
             };
         });
+        
+        // --- PERUBAHAN DIMULAI ---
+        // Tangani event tombol kembali (popstate)
+        window.addEventListener('popstate', function(event) {
+            const iframe = document.getElementById('webapp-iframe');
+            // Jika iframe sudah terlihat (app berjalan) dan pengguna menekan "kembali"
+            // (yang akan menghapus hash #app), kita dorong mereka kembali ke #app.
+            if (iframe.style.visibility === 'visible' && window.location.hash !== '#app') {
+                history.pushState({ page: "app" }, "App", "#app");
+                console.log("Tombol kembali ditekan, mencegah aplikasi keluar.");
+            }
+        });
+        // --- PERUBAHAN SELESAI ---
     </script>
 
 </body>
