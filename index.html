@@ -192,7 +192,8 @@
             iframe.onload = function() {
                 loader.style.display = 'none';
                 iframe.style.visibility = 'visible';
-                 // --- PERUBAHAN DIMULAI ---
+                
+                // --- PERUBAHAN DIMULAI ---
                 // Tambahkan state ke history setelah app dimuat
                 // Ini menciptakan "jebakan" agar tombol kembali tidak menutup app
                 if (window.location.hash !== '#app') {
