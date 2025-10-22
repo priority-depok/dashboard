@@ -1,0 +1,21 @@
+{
+  "name": "Dashboard Siswa",
+  "short_name": "Dashboard",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#f0f0f0",
+  "theme_color": "#3498db",
+  "description": "Dashboard Siswa Priority Depok",
+  "icons": [
+    {
+      "src": "/apple-icon-192x192.png?text=DashboardPriority",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/apple-icon-512x512.png?text=DashboardPriority",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
