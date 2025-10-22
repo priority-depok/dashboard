@@ -3,16 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- PWA & Mobile App Meta Tags -->
     <title>Dashboard Siswa Priority Depok</title>
-    <link rel="icon" type="image/png" href="https://lh3.googleusercontent.com/rd-d/ALs6j_EfjdCRIggelcuTTiDFnB2fW6KkJGgpjayUHfh3oHuxeHMHvW3Rk-LecjQEsJB1lbO6PWG-WiGVs0Zm93LfOpP-wpVp4BIcde5kV44ZRyT5iAZFHa0nSuGekz9QH0QZY-a0dy6qDBX-uG0sOvV8Yh0OHSN0G3IcGGVM-DicxEDWOMrVQlaweaxP92E8JEYpnc1EobsMjwVvdRx2cKRh5KTzZgYms6qUvFun8r_WIHJROjC-LbbO_e_E9nukJLzg5_3e1cVHJPsSjL2ttK5qFCkoDsbEk8g7bByN-VXbcihr2TA_Kk6uxfMChsmcCaIPpnD2sMw3bhkvc4m_Qt8p8VfCYaSBfJ7dv5h1Za_U03TaASzWWPHJS0uvmAO_FKLQAo6s3JWLKmc-ZRUoRk0OiAHkMJjGkexJQBDsH0BTRduymhN7CzfxyogYVdJz7Dj52iHMat2k9IOHz97KgTWuClG_vloSaceclO_LmVxfp9bEQ6WiS2q9TEpHLFyVoFAQY9GWKfX_vAzMoqn6KZuz6rhh5s4oaLU5YBpyHlWZkJuBd3FNsGzSqwSx9B34tpD5Nz4lnMGKhJA5mdYNU4UJnsYlHTlULEHzNdX4KaVVXSlMX60Euwq_5bJ1Uk4J1E6nziJjhNq_sa0jXjUozyyuCUIHYf__mUSBgAmW4h3of20PQ65GLxZJGLxCY68P2du_iWxX9ChdS141Nl4DcDjncPneWrfTElcY-1nVhHxqVDrFbd1Kucac00R5hmDJYoJz39xcfScsOQAxfTXn40gFXUlnFg_Ld54NpDt8mdq4-FewdLBoO5ZGFo32peD5ckORyVXYFNBjUXKcqwSsyz3VecpE46_KrS5np3SJPJx8YyMiibkpEc4iFsxNmLltrBGEsfPZ3HJ2-bUFdsxuUnZHlGOfu5TbANfERniGg8VdS2GVFsjA7Vmp256jFffx6NPkpZNFEvz1bKQL8khi-qMTe6c3kLkSKYn_k_pRJOPmy9K8CFKYP_4ZJQdE5Pjyus2XceerakV5AsRwYzGs3R0D6H7IDEIW81O5K3joZSy_I7d0mxKCLF2kA3Bhp_la25Ubb7i5oJz5wtjDD_9WkTKDPTjFNG_w_dqK6TRTzSxlYq1ckolN9kB3GFXT=k">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#3498db">
+
+    <!-- iOS "Add to Home Screen" support -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Dashboard">
+    <link rel="apple-touch-icon" href="/apple-icon-180x180">
+
     <style>
         body, html {
             margin: 0;
             padding: 0;
             height: 100%;
             overflow: hidden;
-            font-family: sans-serif;
-            background-color: #f0f0f0; /* Menambahkan background untuk loading */
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: #f0f0f0;
         }
         .responsive-iframe {
             position: absolute;
@@ -21,7 +31,7 @@
             width: 100%;
             height: 100%;
             border: none;
-            visibility: hidden; /* Sembunyikan iframe awalnya */
+            visibility: hidden;
         }
         .loader {
             border: 8px solid #dddddd;
@@ -39,11 +49,60 @@
             0% { transform: translate(-50%, -50%) rotate(0deg); }
             100% { transform: translate(-50%, -50%) rotate(360deg); }
         }
+
+        /* --- Install Prompt Card Styles --- */
+        #install-overlay {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            width: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: none; /* Awalnya tersembunyi */
+            z-index: 1000;
+            padding-bottom: env(safe-area-inset-bottom); /* Untuk notch iPhone */
+        }
+        #install-card {
+            background-color: white;
+            border-top-left-radius: 16px;
+            border-top-right-radius: 16px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+        }
+        #install-card h3 {
+            margin: 0 0 10px 0;
+        }
+        #install-card p {
+            margin: 0 0 15px 0;
+            font-size: 14px;
+            color: #333;
+        }
+        #install-controls {
+            display: flex;
+            gap: 10px;
+        }
+        .install-button {
+            flex: 1;
+            padding: 10px;
+            border-radius: 8px;
+            border: none;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        #install-button {
+            background-color: #3498db;
+            color: white;
+        }
+        #later-button {
+            background-color: #ecf0f1;
+            color: #7f8c8d;
+        }
     </style>
 </head>
 <body>
     
-    <!-- Elemen untuk menampilkan animasi loading -->
     <div id="loading-spinner" class="loader"></div>
 
     <iframe 
@@ -55,18 +114,79 @@
         referrerpolicy="no-referrer-when-downgrade">
     </iframe>
 
+    <!-- --- Install Prompt Card HTML --- -->
+    <div id="install-overlay">
+        <div id="install-card">
+            <h3>Install Aplikasi</h3>
+            <p>Tambahkan dashboard ini ke beranda Anda untuk akses cepat.</p>
+            <div id="install-controls">
+                <button id="later-button" class="install-button">Nanti Saja</button>
+                <button id="install-button" class="install-button">Install</button>
+            </div>
+        </div>
+    </div>
+
     <script>
+        let deferredPrompt; // Variabel untuk menyimpan event install
+        const installOverlay = document.getElementById('install-overlay');
+        const installButton = document.getElementById('install-button');
+        const laterButton = document.getElementById('later-button');
+
+        // --- 1. Service Worker Registration ---
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then(registration => {
+                        console.log('ServiceWorker registered: ', registration);
+                    })
+                    .catch(registrationError => {
+                        console.log('ServiceWorker registration failed: ', registrationError);
+                    });
+            });
+        }
+
+        // --- 2. Install Prompt Logic (Hanya untuk Android/Chrome) ---
+        window.addEventListener('beforeinstallprompt', (e) => {
+            // Mencegah prompt bawaan Chrome
+            e.preventDefault();
+            // Simpan event untuk nanti
+            deferredPrompt = e;
+            // Tampilkan card custom kita
+            installOverlay.style.display = 'block';
+        });
+
+        // Saat tombol "Install" diklik
+        installButton.addEventListener('click', async () => {
+            // Sembunyikan card
+            installOverlay.style.display = 'none';
+            // Tampilkan prompt install
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                // Tunggu respons pengguna
+                const { outcome } = await deferredPrompt.userChoice;
+                console.log(`User response to the install prompt: ${outcome}`);
+                // Kosongkan variabel
+                deferredPrompt = null;
+            }
+        });
+
+        // Saat tombol "Nanti Saja" diklik
+        laterButton.addEventListener('click', () => {
+            installOverlay.style.display = 'none';
+            deferredPrompt = null;
+        });
+
+        // --- 3. Iframe Loader Logic (Kode Anda sebelumnya) ---
         window.addEventListener('load', function() {
             const iframe = document.getElementById('webapp-iframe');
             const loader = document.getElementById('loading-spinner');
 
             // --- GANTI ID-SCRIPT-ANDA DI BAWAH INI ---
-            const appScriptId = 'AKfycbwz0q7gqChfy2-WWK7a_dgsraH-Y1zekx1fx9qaZISZxF0UqNRIqV9eLBmvqw348suk';
+            const appScriptId = 'ID-SCRIPT-ANDA';
             // -----------------------------------------
 
             const appScriptUrl = `https://script.google.com/macros/s/${appScriptId}/exec?authuser=0`;
 
-            // Atur sumber iframe secara dinamis
             iframe.src = appScriptUrl;
 
             iframe.onload = function() {
